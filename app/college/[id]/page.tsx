@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 
 export default function CollegePage() {
   const { id } = useParams()
@@ -17,14 +19,16 @@ export default function CollegePage() {
   }, [id])
 
   const handleSave = async () => {
-    const res = await fetch('/api/saved', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ collegeId: id }),
-    })
-    if (res.ok) setSaved(true)
-    else alert('Please login to save colleges')
-  }
+  const res = await fetch('/api/saved', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ collegeId: id }),
+    credentials: 'include',
+  })
+  if (res.ok) setSaved(true)
+  else if (res.status === 401) alert('Please login to save colleges')
+  else alert('Error saving college')
+}
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-400">Loading...</div>
   if (!college) return <div className="min-h-screen flex items-center justify-center text-gray-400">College not found</div>
