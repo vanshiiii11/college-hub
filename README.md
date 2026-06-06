@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CollegeHub 🎓
+
+A full-stack college discovery and decision-making platform built with Next.js, TypeScript, and PostgreSQL.
+
+## Live Demo
+[college-hub-uawh.vercel.app](https://college-hub-uawh.vercel.app)
+
+## Features
+- 🔍 College listing with real-time search and state filtering
+- 📄 Detailed college pages with courses, fees, and placement stats
+- ⚖️ Side-by-side college comparison (up to 3 colleges)
+- 🔐 Authentication with login/signup (NextAuth + bcrypt)
+- 💾 Save colleges to your profile
+
+## Tech Stack
+- **Frontend:** Next.js 16, React, TypeScript, TailwindCSS
+- **Backend:** Next.js API Routes, NextAuth
+- **Database:** PostgreSQL (Neon) + Prisma ORM
+- **Deployment:** Vercel
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+git clone https://github.com/vanshiiii11/college-hub.git
+cd college-hub
+npm install
+npx prisma generate
+npx prisma migrate dev
+npx prisma db seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment Variables
+```env
+DATABASE_URL=your_neon_postgresql_url
+NEXTAUTH_SECRET=your_secret
+NEXTAUTH_URL=http://localhost:3000
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Architecture
+- `app/` — Next.js app router pages and API routes
+- `lib/` — Prisma client and NextAuth configuration
+- `prisma/` — Database schema, migrations, and seed data
