@@ -1,17 +1,32 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { PrismaClient } from '@prisma/client'
+import { neonConfig } from '@neondatabase/serverless'
+import ws from 'ws'
 
-export async function GET(request: Request, context: any) {
+neonConfig.webSocketConstructor = ws
+
+const prisma = new PrismaClient()
+
+export async function GET(req: Request) {
   try {
-    const id = context.params?.id || (await context.params)?.id
-    const college = await prisma.college.findUnique({
-      where: { id },
-      include: { reviews: { include: { user: { select: { name: true } } } } },
+    const { searchParams } = new URL(req.url)
+    const search = searchParams.get('search') || ''
+    const state = searchParams.get('state') || ''
+    const maxFees = parseInt(searchParams.get('maxFees') || '10000000')
+    const colleges = await prisma.college.findMany({
+      where: {
+        AND: [
+          { name: { contains: search, mode: 'insensitive' } },
+          state ? { state: { equals: state } } : {},
+          { fees: { lte: maxFees } },
+        ],
+      },
+      orderBy: { rating: 'desc' },
     })
-    if (!college) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-    return NextResponse.json(college)
-  } catch {
+    return NextResponse.json(colleges)
+  } catch (e) {
+    console.error(e)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
