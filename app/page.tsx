@@ -1,8 +1,10 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
 
 export default function Home() {
+  const { data: session } = useSession()
   const [colleges, setColleges] = useState<any[]>([])
   const [search, setSearch] = useState('')
   const [state, setState] = useState('')
@@ -18,10 +20,17 @@ export default function Home() {
     <main className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow px-6 py-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold text-blue-600">CollegeHub</h1>
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
           <Link href="/compare" className="text-gray-600 hover:text-blue-600">Compare</Link>
           <Link href="/saved" className="text-gray-600 hover:text-blue-600">Saved</Link>
-          <Link href="/login" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Login</Link>
+          {session ? (
+            <div className="flex items-center gap-3">
+              <span className="text-gray-700 font-semibold">Hi, {session.user?.name}</span>
+              <button onClick={() => signOut()} className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 text-sm">Logout</button>
+            </div>
+          ) : (
+            <Link href="/login" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Login</Link>
+          )}
         </div>
       </nav>
       <div className="max-w-6xl mx-auto px-6 py-10">
