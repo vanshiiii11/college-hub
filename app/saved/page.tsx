@@ -7,11 +7,24 @@ export default function Saved() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    fetchSaved()
+  }, [])
+
+  const fetchSaved = () => {
     fetch('/api/saved').then(r => r.json()).then(data => {
       if (Array.isArray(data)) setColleges(data)
       setLoading(false)
     })
-  }, [])
+  }
+
+  const handleUnsave = async (collegeId: string) => {
+    const res = await fetch('/api/saved', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ collegeId }),
+    })
+    if (res.ok) setColleges(colleges.filter(c => c.id !== collegeId))
+  }
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -35,7 +48,10 @@ export default function Saved() {
                 <h3 className="font-bold text-lg mb-2">{college.name}</h3>
                 <p className="text-gray-500 text-sm mb-1">📍 {college.location}, {college.state}</p>
                 <p className="text-blue-600 font-semibold mb-4">₹{college.fees.toLocaleString()}/year</p>
-                <Link href={`/college/${college.id}`} className="block bg-blue-600 text-white text-center py-2 rounded-lg hover:bg-blue-700 text-sm">View Details</Link>
+                <div className="flex gap-2">
+                  <Link href={`/college/${college.id}`} className="flex-1 bg-blue-600 text-white text-center py-2 rounded-lg hover:bg-blue-700 text-sm">View Details</Link>
+                  <button onClick={() => handleUnsave(college.id)} className="flex-1 bg-red-500 text-white text-center py-2 rounded-lg hover:bg-red-600 text-sm">Remove</button>
+                </div>
               </div>
             ))}
           </div>
