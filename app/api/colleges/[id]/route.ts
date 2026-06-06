@@ -1,10 +1,12 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+
+export async function GET(_: Request, context: any) {
   try {
+    const { id } = await context.params
     const college = await prisma.college.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { reviews: { include: { user: { select: { name: true } } } } },
     })
     if (!college) return NextResponse.json({ error: 'Not found' }, { status: 404 })
