@@ -13,10 +13,20 @@ export default function CollegePage() {
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    fetch(`/api/colleges/${id}`)
-      .then(r => r.json())
-      .then(data => { setCollege(data); setLoading(false) })
-  }, [id])
+  fetch(`/api/colleges/${id}`)
+    .then(r => r.json())
+    .then(data => { setCollege(data); setLoading(false) })
+  
+  // Check if already saved
+  fetch('/api/saved')
+    .then(r => r.json())
+    .then(data => {
+      if (Array.isArray(data)) {
+        const alreadySaved = data.find((c: any) => c.id === id)
+        if (alreadySaved) setSaved(true)
+      }
+    })
+}, [id])
 
   const handleSave = async () => {
   const res = await fetch('/api/saved', {
